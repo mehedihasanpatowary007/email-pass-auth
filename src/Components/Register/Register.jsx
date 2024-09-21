@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { Link } from "react-router-dom";
 import { auth } from "../../Firebase/firebase.config";
 import { useState } from "react";
@@ -47,7 +47,11 @@ const Register = () => {
 
     // create user
     createUserWithEmailAndPassword(auth, email, password)
+    
       .then((userCredential) => {
+        sendEmailVerification(auth.currentUser).then(() => {
+          alert("check your email for verification");
+        });
         const loginUser = userCredential.user;
         setUser(loginUser);
         setRegSuccess("Registration successful");
@@ -58,7 +62,7 @@ const Register = () => {
         setPasswordErr("");
         setConditionError('')
       })
-      .catch((err) => setErrMessage(err.message));
+      .catch((err) => console.log(err.message));
   };
 
   return (
@@ -68,7 +72,7 @@ const Register = () => {
           <div className="w-1/2">
             <img
               className=""
-              src="https://anzmh.asn.au/hubfs/Untitled%20design%20(23)-4.png"
+              src="https://img.freepik.com/premium-vector/workflow-management-business-concept-illustration-young-businesswoman-planning-her-work-modern_348082-1953.jpg"
               alt=""
             />
           </div>
@@ -181,7 +185,7 @@ const Register = () => {
                 </div>
                 <button
                   type="submit"
-                  className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  className="w-full text-white bg-[#0ab8b2] hover:bg-[#048580] duration-200 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-[#0ab8b2] dark:hover:bg-[#0ab8b2]dark:focus:ring-primary-800"
                 >
                   Sing up
                 </button>

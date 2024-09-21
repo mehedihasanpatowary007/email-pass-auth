@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../Firebase/firebase.config";
+import { toast } from "react-toastify";
 
 const Login = () => {
    const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ const Login = () => {
    const[success, setSuccess] = useState('')
    const [user, setUser] = useState(null)
    console.log(user)
+   const [userError, setUserError] = useState('')
 
     const handleLogin = (e)=> {
         e.preventDefault()
@@ -32,16 +34,25 @@ const Login = () => {
           setPasswordErr("Password must be at least 6 character ");
           return;
         }
-        
+        setSuccess('')
         signInWithEmailAndPassword(auth, email, password).then((result) => {
             const loginUser = result.user
             setUser(loginUser)
+            setUserError('')
             setSuccess('Login success')
             setEmailError('')
             setPasswordErr('')
             setEmail('')
             setPassword("")
-        }).catch((err => console.log(err.message)))
+        }).catch((err => setUserError(err.message)))
+        
+    }
+
+    const handleForgetPassword = () => {
+        sendPasswordResetEmail(auth, email).then(()=> {
+             alert("Please check your email");
+        }).then(err => console.log(err))
+           
         
     }
     return (
@@ -76,6 +87,9 @@ const Login = () => {
                   <label className="block text-gray-700 text-sm font-bold mb-2">
                     Password
                   </label>
+                  <span onClick={handleForgetPassword} className="text-xs text-gray-500 cursor-pointer">
+                    Forget Password?
+                  </span>
                 </div>
                 <div className="relative flex items-center">
                   <input
@@ -92,9 +106,8 @@ const Login = () => {
                   </span>
                 </div>
                 {passwordErr && (
-                    <p className="text-base text-red-500 italic">
-                      {passwordErr}
-                    </p>)}
+                  <p className="text-base text-red-500 italic">{passwordErr}</p>
+                )}
               </div>
               <div className="mt-8">
                 <button className="bg-[#0ab8b2] text-white font-bold py-2 px-4 w-full rounded hover:bg-gray-600 duration-200">
@@ -112,6 +125,9 @@ const Login = () => {
               </div>
               {success && (
                 <p className="text-green-500 italic text-base">{success}</p>
+              )}
+              {userError && (
+                <p className="text-red-500 text-base italic">{userError}</p>
               )}
             </form>
           </div>
